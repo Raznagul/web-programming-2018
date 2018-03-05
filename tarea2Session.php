@@ -50,7 +50,7 @@
                 echo "</tr>";
             }
         ?> 
-        <tr>
+        <tr> 
             <form action="" method="post">
                 <td><input name="dia" type="date"></td>
 
