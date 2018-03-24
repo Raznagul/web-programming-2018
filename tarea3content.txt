@@ -1,5 +1,3 @@
-asd;asd;asd;asd;asd;email0@mail;address0;
-name1;work1;mobile1;email1@mail;address1;
-name2;work2;mobile2;email2@mail;address2;
-name3;work3;mobile3;email3@mail;address3;
-name4;work4;mobile4;email4@mail;address4;
+1;1;1;1;1;
+yuio;yuio;yuio;yuio;yuio;
+yuio;yuio;yuio;yuio;yuio;

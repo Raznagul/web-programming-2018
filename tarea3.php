@@ -18,10 +18,104 @@
             echo "</br>";   
 
             if (isset($_POST['create'])) {
-                $contentFile = fopen("tarea3content.txt","c");
+                
+                //$pointerPosition = ftell($contentFile);
+
+
+                /*
+                echo "file";
+                echo "</br>";
+                echo $contentFile;
+                print_r($contentFile);
+                var_dump($contentFile);
+
+                echo "</br>";
+                echo "</br>";
+                echo "ftell";
+                echo "</br>";
+                echo $contentFile;
+                print_r($contentFile);
+                var_dump($contentFile);
+
+                echo "</br>";
+                echo "</br>";
+                echo PHP_EOL."fgets";
+                echo "</br>";
+                echo fgets($contentFile);
+                print_r(fgets($contentFile));
+                var_dump(fgets($contentFile));
+
+                echo "</br>";
+                echo "</br>";
+                echo PHP_EOL."SEEK_CUR";
+                echo "</br>";
+                echo fseek($contentFile, 41, SEEK_CUR);
+                print_r(fseek($contentFile, 41, SEEK_CUR));
+                var_dump(fseek($contentFile, 41, SEEK_CUR));
+                echo fgets($contentFile);
+
+                echo "</br>";
+                echo "</br>";
+                echo "ftell";
+                echo "</br>";
+                echo $contentFile;
+                print_r($contentFile);
+                var_dump($contentFile);
+
+                echo "</br>";
+                echo "</br>";
+                echo PHP_EOL."SEEK_SET";
+                echo "</br>";
+                echo fseek($contentFile, 21, SEEK_SET);
+                print_r(fseek($contentFile, 31, SEEK_SET));
+                var_dump(fseek($contentFile, 21, SEEK_SET));
+                echo fgets($contentFile);
+
+                echo "</br>";
+                echo "</br>";
+                echo "ftell";
+                echo "</br>";
+                echo $contentFile;
+                print_r($contentFile);
+                var_dump($contentFile);
+
+                echo "</br>";
+                echo "</br>";
+                echo PHP_EOL."SEEK_END ";
+                echo "</br>";
+                echo fseek($contentFile, 81, SEEK_END );
+                print_r(fseek($contentFile, 81, SEEK_END));
+                var_dump(fseek($contentFile, 81, SEEK_END));
+                echo fgets($contentFile);
+
+                echo "</br>";
+                echo "</br>";
+                echo "ftell";
+                echo "</br>";
+                echo $contentFile;
+                print_r($contentFile);
+                var_dump($contentFile);
+                */
+
+                $contentFile = fopen("tarea3content.txt","a+");
                 $newContent = $_POST['name'].";".$_POST['work'].";".$_POST['mobile'].";".$_POST['email'].";".$_POST['address'].";".PHP_EOL;
-                fwrite($contentFile, $newContent);
+                $contentByteWriten = fwrite($contentFile, $newContent);
                 fclose($contentFile);
+
+                $arrayIndex = file("tarea3index.txt");
+                if(!empty($arrayIndex)){
+                    $arrayIndex = end($arrayIndex);
+                    $arrayIndex = explode(";", $arrayIndex);
+                    $previosIndex = intval($arrayIndex[1]);
+                } else {
+                    $previosIndex = 0;
+                }
+
+                $indexFile = fopen("tarea3index.txt","a+");
+                $newIndex = $_POST['name'].";" .($contentByteWriten+$previosIndex).";".PHP_EOL;
+                $byteWriten = fwrite($indexFile, $newIndex);
+                fclose($indexFile);
+
 
             }
 
@@ -43,7 +137,9 @@
                 <td><a href="tarea3.php">New</a></td>
             <?php 
                 foreach ($indexArray as $key => $value) {
-                    
+
+                    $value = explode(";", $value);
+                    $value = reset($value);
                     echo "<tr>";
                     echo '<td><a target="_self" href="?contact='.$value.'">'.$value.'</a></td>';
                     echo "</tr>";
@@ -69,6 +165,27 @@
                 */
 
                 if (isset($_GET['contact'])) { 
+
+                    $indexFile = fopen("tarea3index.txt","a+");
+                    $newIndex = $_POST['name'].";" .($contentByteWriten+$previosIndex).";".PHP_EOL;
+                    $byteWriten = fwrite($indexFile, $newIndex);
+                    fclose($indexFile);
+                    
+                    $contentFile = fopen("tarea3content.txt","a+");
+                    $newContent = $_POST['name'].";".$_POST['work'].";".$_POST['mobile'].";".$_POST['email'].";".$_POST['address'].";".PHP_EOL;
+                    $contentByteWriten = fwrite($contentFile, $newContent);
+                    fclose($contentFile);
+
+                    $arrayIndex = file("tarea3index.txt");
+                    if(!empty($arrayIndex)){
+                        $arrayIndex = end($arrayIndex);
+                        $arrayIndex = explode(";", $arrayIndex);
+                        $previosIndex = intval($arrayIndex[1]);
+                    } else {
+                        $previosIndex = 0;
+                    }
+
+                    
             ?>
                     <table>
                         <tr>
