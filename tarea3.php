@@ -139,9 +139,8 @@
                 foreach ($indexArray as $key => $value) {
 
                     $value = explode(";", $value);
-                    $value = reset($value);
                     echo "<tr>";
-                    echo '<td><a target="_self" href="?contact='.$value.'">'.$value.'</a></td>';
+                    echo '<td><a target="_self" href="?contact='.$value[0].'&i='.$value[1].'">'.$value[0].'</a></td>';
                     echo "</tr>";
                     
                 }
@@ -164,27 +163,15 @@
 
                 */
 
-                if (isset($_GET['contact'])) { 
+                if (isset($_GET['contact'], $_GET['i'])) { 
 
-                    $indexFile = fopen("tarea3index.txt","a+");
-                    $newIndex = $_POST['name'].";" .($contentByteWriten+$previosIndex).";".PHP_EOL;
-                    $byteWriten = fwrite($indexFile, $newIndex);
-                    fclose($indexFile);
-                    
-                    $contentFile = fopen("tarea3content.txt","a+");
-                    $newContent = $_POST['name'].";".$_POST['work'].";".$_POST['mobile'].";".$_POST['email'].";".$_POST['address'].";".PHP_EOL;
-                    $contentByteWriten = fwrite($contentFile, $newContent);
+                    $contentFile = fopen("tarea3content.txt","c+");
+
+                    echo "<br>asd</br>";
+                    fseek($contentFile, $_GET['i'], SEEK_CUR);
+                    $content = fgets($contentFile);
+                    var_dump($content);
                     fclose($contentFile);
-
-                    $arrayIndex = file("tarea3index.txt");
-                    if(!empty($arrayIndex)){
-                        $arrayIndex = end($arrayIndex);
-                        $arrayIndex = explode(";", $arrayIndex);
-                        $previosIndex = intval($arrayIndex[1]);
-                    } else {
-                        $previosIndex = 0;
-                    }
-
                     
             ?>
                     <table>
