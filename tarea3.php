@@ -8,6 +8,12 @@
         <h1>Tarea 3</h1>
 
         <?php
+
+            session_start();
+            if (!isset($_SESSION['i'])) { 
+                $_SESSION['i'] = null;
+            }
+
             echo "get";
             echo "</br>";
             print_r($_GET);  // for all GET variables
@@ -18,84 +24,6 @@
             echo "</br>";   
 
             if (isset($_POST['create'])) {
-                
-                //$pointerPosition = ftell($contentFile);
-
-
-                /*
-                echo "file";
-                echo "</br>";
-                echo $contentFile;
-                print_r($contentFile);
-                var_dump($contentFile);
-
-                echo "</br>";
-                echo "</br>";
-                echo "ftell";
-                echo "</br>";
-                echo $contentFile;
-                print_r($contentFile);
-                var_dump($contentFile);
-
-                echo "</br>";
-                echo "</br>";
-                echo PHP_EOL."fgets";
-                echo "</br>";
-                echo fgets($contentFile);
-                print_r(fgets($contentFile));
-                var_dump(fgets($contentFile));
-
-                echo "</br>";
-                echo "</br>";
-                echo PHP_EOL."SEEK_CUR";
-                echo "</br>";
-                echo fseek($contentFile, 41, SEEK_CUR);
-                print_r(fseek($contentFile, 41, SEEK_CUR));
-                var_dump(fseek($contentFile, 41, SEEK_CUR));
-                echo fgets($contentFile);
-
-                echo "</br>";
-                echo "</br>";
-                echo "ftell";
-                echo "</br>";
-                echo $contentFile;
-                print_r($contentFile);
-                var_dump($contentFile);
-
-                echo "</br>";
-                echo "</br>";
-                echo PHP_EOL."SEEK_SET";
-                echo "</br>";
-                echo fseek($contentFile, 21, SEEK_SET);
-                print_r(fseek($contentFile, 31, SEEK_SET));
-                var_dump(fseek($contentFile, 21, SEEK_SET));
-                echo fgets($contentFile);
-
-                echo "</br>";
-                echo "</br>";
-                echo "ftell";
-                echo "</br>";
-                echo $contentFile;
-                print_r($contentFile);
-                var_dump($contentFile);
-
-                echo "</br>";
-                echo "</br>";
-                echo PHP_EOL."SEEK_END ";
-                echo "</br>";
-                echo fseek($contentFile, 81, SEEK_END );
-                print_r(fseek($contentFile, 81, SEEK_END));
-                var_dump(fseek($contentFile, 81, SEEK_END));
-                echo fgets($contentFile);
-
-                echo "</br>";
-                echo "</br>";
-                echo "ftell";
-                echo "</br>";
-                echo $contentFile;
-                print_r($contentFile);
-                var_dump($contentFile);
-                */
 
                 $contentFile = fopen("tarea3content.txt","a+");
                 $newContent = $_POST['name'].";".$_POST['work'].";".$_POST['mobile'].";".$_POST['email'].";".$_POST['address'].";".PHP_EOL;
@@ -112,13 +40,66 @@
                 }
 
                 $indexFile = fopen("tarea3index.txt","a+");
-                $newIndex = $_POST['name'].";" .($contentByteWriten+$previosIndex).";".PHP_EOL;
+                $newIndex = $_POST['name'].";" .($contentByteWriten+$previosIndex).";".$contentByteWriten.";".TRUE.";".PHP_EOL;
                 $byteWriten = fwrite($indexFile, $newIndex);
                 fclose($indexFile);
 
 
             }
 
+            if (isset($_POST['delete'])){
+                $indexFile = file("tarea3index.txt");
+                
+                $posArray = explode(";", $indexFile[$_SESSION["p"]]);
+                $posArray[3] = 0;
+                
+                $indexFile[$_SESSION["p"]] = implode(";", $posArray);
+                
+                file_put_contents("tarea3index.txt", $indexFile);
+            }
+
+            if (isset($_POST['delete'])){
+                $indexFile = file("tarea3index.txt");
+                
+                $posArray = explode(";", $indexFile[$_SESSION["p"]]);
+                $posArray[3] = 0;
+                
+                $indexFile[$_SESSION["p"]] = implode(";", $posArray);
+                
+                file_put_contents("tarea3index.txt", $indexFile);
+            }
+
+            if (isset($_POST['update'])) {
+
+                $contentFile = fopen("tarea3content.txt","a+");
+                $newContent = $_POST['name'].";".$_POST['work'].";".$_POST['mobile'].";".$_POST['email'].";".$_POST['address'].";".PHP_EOL;
+                $contentByteWriten = fwrite($contentFile, $newContent);
+                fclose($contentFile);
+
+                $arrayIndex = file("tarea3index.txt");
+                if(!empty($arrayIndex)){
+                    $arrayIndex = end($arrayIndex);
+                    $arrayIndex = explode(";", $arrayIndex);
+                    $previosIndex = intval($arrayIndex[1]);
+                } else {
+                    $previosIndex = 0;
+                }
+
+                $indexFile = fopen("tarea3index.txt","a+");
+                $newIndex = $_POST['name'].";" .($contentByteWriten+$previosIndex).";".$contentByteWriten.";".TRUE.";".PHP_EOL;
+                $byteWriten = fwrite($indexFile, $newIndex);
+                fclose($indexFile);
+
+                $indexFile = file("tarea3index.txt");
+                
+                $posArray = explode(";", $indexFile[$_SESSION["p"]]);
+                $posArray[3] = 0;
+                
+                $indexFile[$_SESSION["p"]] = implode(";", $posArray);
+                
+                file_put_contents("tarea3index.txt", $indexFile);
+
+            }
 
             $indexArray = file("tarea3index.txt");
             if ($indexArray){
@@ -139,10 +120,11 @@
                 foreach ($indexArray as $key => $value) {
 
                     $value = explode(";", $value);
-                    echo "<tr>";
-                    echo '<td><a target="_self" href="?contact='.$value[0].'&i='.$value[1].'">'.$value[0].'</a></td>';
-                    echo "</tr>";
-                    
+                    if ($value[3]) {
+                        echo "<tr>";
+                        echo '<td><a target="_self" href="?contact='.$value[0].'&i='.$value[1]."&w=".$value[2]."&p=".$key.'">'.$value[0].'</a></td>';
+                        echo "</tr>";
+                    }  
                 }
                 
             ?>
@@ -150,56 +132,57 @@
 
         <hr style="border:none; height:1px;background-color:#000080">
 
-        <form action="" method="post">
+        <form action="tarea3.php" method="post">
             
             <?php 
-                /*
 
-                foreach($_GET as $key => $value) {
-                    echo $key.":".$value;
-                }
-                echo $_GET['param1'];
-                index.php?param1=yes&param2=no
-
-                */
 
                 if (isset($_GET['contact'], $_GET['i'])) { 
 
                     $contentFile = fopen("tarea3content.txt","c+");
 
-                    echo "<br>asd</br>";
-                    fseek($contentFile, $_GET['i'], SEEK_CUR);
+                    fseek($contentFile, ($_GET['i']-$_GET['w']), SEEK_CUR);
                     $content = fgets($contentFile);
-                    var_dump($content);
+                    $content = explode(";", $content);
                     fclose($contentFile);
+
+                    $_SESSION['i'] = $_GET['i'];
+                    $_SESSION['w'] = $_GET['w'];
+                    $_SESSION['p'] = $_GET['p'];
+                    var_dump($_GET['i']);
+                    var_dump($_GET['w']);
+                    var_dump($_GET['p']);
                     
             ?>
                     <table>
                         <tr>
                             <td>name</td>
-                            <td><input name="name" type="text" value= "test"></td>
+                            <td><input name="name" type="text" value= "<?php echo $content[0]?>"></td>
                         </tr>
                         <tr>
                             <td>work</td>
-                            <td><input name="work" type="text" value= "test"></td>
+                            <td><input name="work" type="text" value= "<?php echo $content[1]?>"></td>
                         </tr>
                         <tr>
                             <td>mobile</td>
-                            <td><input name="mobile" type="tel" value= "test"></td>
+                            <td><input name="mobile" type="tel" value= "<?php echo $content[2]?>"></td>
                         </tr>
                         <tr>
                             <td>email</td>
-                            <td><input name="email" type="text" value= "test@test"></td>
+                            <td><input name="email" type="text" value= "<?php echo $content[3]?>"></td>
                         </tr>
                         <tr>
                             <td>address</td>
-                            <td><input name="address" type="text" value= "test"></td>
+                            <td><input name="address" type="text" value= "<?php echo $content[4]?>"></td>
                         </tr>
                     </table>
                     <button type="submit" name="delete">Delete</button>
                     <button type='submit' name='update'>Update</button>
             <?php 
                 } else {
+                    $_SESSION['i'] = null;
+                    $_SESSION['w'] = null;
+                    $_SESSION['s'] = null;
             ?>
                     <table>
                         <tr>
@@ -231,60 +214,7 @@
         </form>
 
 <?php 
-/*
-            
-        <table>
-        <tr>
-            <th>Dia</th>
-            <th>Hora</th>
-            <th>Evento</th>
-            <th>Operacion</th>
-        </tr>
-        <?php 
-            $arrayEventos = isset($_COOKIE['eventos'])? unserialize($_COOKIE['eventos']): array();
-            if (isset($_POST['Submit'])) { 
-                $evento = array(
-                    'dia' => $_POST['dia'],
-                    'hora' => $_POST['hora'],
-                    'evento' => $_POST['evento']
-                );
-                $arrayEventos[] = $evento;
-                $arrayEventos = array_values($arrayEventos);
-            }
-            if (isset($_POST['Delete'])) { 
-                $index = $_POST['Delete'];
-                unset($arrayEventos[$index]);
-                $arrayEventos = array_values($arrayEventos);
-            }
-            foreach($arrayEventos as $key => $evento){
-                echo "<tr>";
-                echo '<form action="" method="post">';
-                echo "<td>".$evento['dia']."</td>";
-                echo "<td>".$evento['hora']."</td>";
-                echo "<td>".$evento['evento']."</td>";
-                echo '<input hidden type="text" name="Delete" value="'.$key.'">';
-                echo '<td><input type="submit" name="Borrar" value="Borrar" /></td>';
-                echo '</form>';
-                echo "</tr>";
-            }
-        ?> 
-        
-        <tr>
-            <form action="" method="post">
-                <td><input name="dia" type="date"></td>
 
-                <td><input name="hora" type="time"></td>
-
-                <td><input name="evento" type="text"></td>
-
-                <td><input type="submit" name="Submit" value="Nuevo" /></td>
-            </form>
-        </tr>
-        </table>
-        
-        <?php            
-            setcookie('eventos', serialize($arrayEventos));  
-*/
 ?> 
         
         
